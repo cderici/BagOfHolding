@@ -3,17 +3,12 @@
 Personal physical storage inventory app.
 This repo contains a backend state layer backed by PostgreSQL, plus clients.
 
-Local development uses mutual TLS between the backend and PostgreSQL.
-This means the backend authenticates to Postgres with a client certificate, and the backend verifies the Postgres server certificate and hostname.
-
-No keys or certificates are committed to this repo.
-
 ## Requirements
 
-Ubuntu packages:
+packages:
 
 ```bash
-sudo apt install -y postgresql openssl libpq-dev libpqxx-dev build-essential cmake
+sudo apt install -y postgresql openssl libpq-dev libpqxx-dev build-essential cmake clang-20
 ```
 
 
@@ -38,11 +33,30 @@ Default output directory:
   server.key
   client.crt
   client.key
+
+
+### Environment variables
+
+The backend uses libpq environment variables for connection configuration.
+
+Minimum:
+
+```bash
+export PGHOST=localhost
+export PGPORT=5432
+export PGDATABASE=bagofholding_state
+export PGUSER=bagofholding_state_backend
+
+export PGSSLMODE=verify-full
+export PGSSLROOTCERT="$HOME/.config/bagofholding/tls/ca.crt"
+export PGSSLCERT="$HOME/.config/bagofholding/tls/client.crt"
+export PGSSLKEY="$HOME/.config/bagofholding/tls/client.key"
+
 ```
 
 2. Configure Postgres for mutual TLS
 
-This copies server certificates into the Postgres data directory, enables TLS, configures Postgres to trust the local certificate authority, and adds pg hba rules requiring a verified client certificate for local connections.
+This copies server certificates into the Postgres data directory, enables TLS, configures Postgres to trust the local certificate authority, and adds pg hba rules requiring a verified client certificate for local connections. You'll need to make sure the order of the hba rules if you want to reject non-TLS connections.
 
 ```bash
 ./scripts/dev-configure-postgres.sh
