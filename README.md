@@ -39,6 +39,7 @@ Default output directory:
   server.key
   client.crt
   client.key
+```
 
 
 ### Environment variables
@@ -91,7 +92,19 @@ create user bagofholding_state_backend;
 create database bagofholding_state owner bagofholding_state_backend;
 ```
 
-4. Build and run the backend
+4. Set up database schema
+
+Apply DB setup SQL from `scripts/db-setup/` in order:
+
+```bash
+chmod +x scripts/db-setup.sh
+./scripts/db-setup.sh
+```
+
+This creates a `schema_migrations` table and applies tracked schema files
+(table, timestamps/trigger, search index).
+
+5. Build and run the backend
 
 See backend/ for build instructions and targets.
 
