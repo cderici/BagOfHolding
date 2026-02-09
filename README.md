@@ -3,6 +3,8 @@
 
 # Bag Of Holding
 
+[![Build](https://github.com/cderici/BagOfHolding/actions/workflows/build.yml/badge.svg)](https://github.com/cderici/BagOfHolding/actions/workflows/build.yml)
+
 Personal physical storage inventory app.
 
 Imagine you have a physical storage room that you want to organize. You get some boxes, and put some labels on them (I use numbers). This app helps you note down the contents with tags, categories etc, and allows fuzzy lookup on various clients (cli, web, android).
