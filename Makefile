@@ -1,5 +1,5 @@
 CXX      := clang++-20
-CXXFLAGS := -std=c++20 -O2 -Wall -Wextra -Wpedantic
+CXXFLAGS := -std=c++23 -D__cpp_lib_source_location=0 -O2 -Wall -Wextra -Wpedantic
 LDFLAGS  := -stdlib=libstdc++
 LDLIBS   := -lpqxx -lpq
 

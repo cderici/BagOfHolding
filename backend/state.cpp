@@ -1,5 +1,52 @@
+#include "errors.h"
+#include "state_types.h"
+#include <chrono>
 #include <iostream>
+#include <optional>
 #include <pqxx/pqxx>
+
+// insert_item
+// returns Item if success
+// throws DuplicatePhysicalLabel if failure
+Item insert_item(pqxx::connection &conn, const InsertInput &in) {
+  try {
+    pqxx::work tx{conn};
+
+    pqxx::result r = tx.exec_params(
+        "insert into stash (physical_label, category, sub_category, contents) "
+        "values ($1, $2, $3, $4) "
+        "returning id, physical_label, category, sub_category, contents, "
+        "(extract(epoch from created_at) * 1000000)::bigint as created_at_us, "
+        "(extract(epoch from updated_at) * 1000000)::bigint as updated_at_us",
+        in.physical_label, in.category, in.sub_category, in.contents);
+
+    tx.commit();
+
+    const auto &row = r[0];
+
+    auto created_us = row["created_at_us"].as<long long>();
+    auto updated_us = row["updated_at_us"].as<long long>();
+
+    return Item{row["id"].as<long>(),
+                row["physical_label"].is_null()
+                    ? std::nullopt
+                    : std::optional<std::string>{row["physical_label"].c_str()},
+                row["category"].c_str(),
+                row["sub_category"].c_str(),
+                row["contents"].c_str(),
+                std::chrono::sys_time<std::chrono::microseconds>{
+                    std::chrono::microseconds{created_us}},
+                std::chrono::sys_time<std::chrono::microseconds>{
+                    std::chrono::microseconds{updated_us}}};
+  } catch (const pqxx::sql_error &e) {
+    if (e.sqlstate() == "23505") {
+      // 23505 is unique constraint violation
+      // if label is null this won't happen, but better safe than sorry
+      throw DuplicatePhysicalLabel(in.physical_label.value_or("<null>"));
+    }
+    throw;
+  }
+}
 
 void dump_stash_to_stdout() {
   pqxx::connection conn{""};
