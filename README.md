@@ -1,7 +1,13 @@
-# BagOfHolding
+
+<img width="200" height="200" alt="BagOfHoldingIcon" src="https://github.com/user-attachments/assets/bdf1510b-24a4-4e21-b439-c46853df19a3" /> 
+
+# Bag Of Holding
 
 Personal physical storage inventory app.
-This repo contains a backend state layer backed by PostgreSQL, plus clients.
+
+Imagine you have a physical storage room that you want to organize. You get some boxes, and put some labels on them (I use numbers). This app helps you note down the contents with tags, categories etc, and allows fuzzy lookup on various clients (cli, web, android).
+
+🚧 Under Development 🚧
 
 ## Requirements
 
