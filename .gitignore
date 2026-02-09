@@ -1,0 +1,17 @@
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# TLS keys and certs
+*.key
+*.pem
+*.p12
+*.pfx
+tls/
+certs/
+secrets/
+
+# Build output
+build/
+
