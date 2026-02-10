@@ -1,5 +1,5 @@
+#include "state.h"
 #include "errors.h"
-#include "state_types.h"
 #include <chrono>
 #include <exception>
 #include <iostream>
@@ -10,7 +10,7 @@
 // returns true --> item deleted as expected
 // return false --> item was not there anyways
 // may throw exception if postgres throws
-bool delete_item(pqxx::connection &conn, long itemID) {
+bool state::delete_item(pqxx::connection &conn, long itemID) {
   try {
     pqxx::work tx{conn};
 
@@ -34,7 +34,7 @@ bool delete_item(pqxx::connection &conn, long itemID) {
 // insert_item
 // returns Item if success
 // throws DuplicatePhysicalLabel if failure
-Item insert_item(pqxx::connection &conn, const InsertInput &in) {
+Item state::insert_item(pqxx::connection &conn, const InsertInput &in) {
   try {
     pqxx::work tx{conn};
 
