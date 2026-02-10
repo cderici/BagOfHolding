@@ -1,0 +1,47 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "30 2 * * *"
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: bagofholding_state
+          POSTGRES_USER: bagofholding_state_backend
+          POSTGRES_PASSWORD: bagofholding_test_pw
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U bagofholding_state_backend -d bagofholding_state"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGDATABASE: bagofholding_state
+      PGUSER: bagofholding_state_backend
+      PGPASSWORD: bagofholding_test_pw
+      PGSSLMODE: disable
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y make clang libpq-dev libpqxx-dev postgresql-client
+
+      - name: Apply database schema
+        run: ./scripts/db-setup.sh
+
+      - name: Run tests
+        run: make test CXX=clang++

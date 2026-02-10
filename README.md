@@ -4,6 +4,7 @@
 # Bag Of Holding
 
 [![Build](https://github.com/cderici/BagOfHolding/actions/workflows/build.yml/badge.svg)](https://github.com/cderici/BagOfHolding/actions/workflows/build.yml)
+[![Tests](https://github.com/cderici/BagOfHolding/actions/workflows/tests.yml/badge.svg)](https://github.com/cderici/BagOfHolding/actions/workflows/tests.yml)
 
 Personal physical storage inventory app.
 
@@ -109,6 +110,12 @@ This creates a `schema_migrations` table and applies tracked schema files
 5. Build and run the backend
 
 See backend/ for build instructions and targets.
+
+Run tests:
+
+```bash
+make test
+```
 
 ## Mutual TLS: What lives where
 
