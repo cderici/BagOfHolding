@@ -30,7 +30,7 @@ $(BUILDDIR)/%_test: tests/backend/state/%_test.cpp backend/state.cpp | $(BUILDDI
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $< backend/state.cpp $(LDLIBS) -o $@
 
 test: test-bin
-	@status=0; for test_bin in $(STATE_TEST_BINS); do ./$$test_bin || status=1; done; exit $$status
+	@state_status=0; for test_bin in $(STATE_TEST_BINS); do ./$$test_bin || state_status=1; done; if [ $$state_status -eq 0 ]; then printf "\nState Layer Tests : PASS\n\n"; else printf "\nState Layer Tests : FAIL\n\n"; fi; backend_status=$$state_status; if [ $$backend_status -eq 0 ]; then printf -- "-- BACKEND TESTS : PASS\n\n"; else printf -- "-- BACKEND TESTS : FAIL\n\n"; fi; exit $$backend_status
 
 run-backend: backend
 	./$(BACKEND_BIN)

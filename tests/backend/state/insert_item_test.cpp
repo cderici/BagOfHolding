@@ -92,11 +92,5 @@ int main() {
   run_test("insert_item_with_label", test_insert_item_with_label);
   run_test("insert_item_with_null_label", test_insert_item_with_null_label);
 
-  if (failures == 0) {
-    std::cout << "\nBackend / State Layer Tests : PASS\n\n";
-    return 0;
-  }
-
-  std::cout << "\nBackend / State Layer Tests : FAIL\n\n";
-  return 1;
+  return failures == 0 ? 0 : 1;
 }
