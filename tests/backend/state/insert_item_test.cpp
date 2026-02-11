@@ -24,14 +24,14 @@ void test_insert_item_with_label() {
   pqxx::connection conn{""};
   reset_stash(conn);
 
-  InsertInput in{
+  state::InsertInput in{
       std::optional<std::string>{"A-001"},
       "decor",
       "holiday",
       "santa decorations and lights",
   };
 
-  Item item = state::insert_item(conn, in);
+  state::Item item = state::insert_item(conn, in);
 
   assert_true(item.id == 1, "expected inserted item id to be 1");
   assert_true(item.physical_label.has_value(), "expected physical_label to exist");
@@ -52,14 +52,14 @@ void test_insert_item_with_null_label() {
   pqxx::connection conn{""};
   reset_stash(conn);
 
-  InsertInput in{
+  state::InsertInput in{
       std::nullopt,
       "kitchen",
       "appliances",
       "small blender and mixer",
   };
 
-  Item item = state::insert_item(conn, in);
+  state::Item item = state::insert_item(conn, in);
 
   assert_true(item.id == 1, "expected inserted item id to be 1");
   assert_true(!item.physical_label.has_value(),

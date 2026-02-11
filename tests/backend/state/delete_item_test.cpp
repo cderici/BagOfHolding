@@ -21,13 +21,13 @@ void assert_true(bool condition, const std::string &message) {
 }
 
 long insert_seed_item(pqxx::connection &conn) {
-  InsertInput in{
+  state::InsertInput in{
       std::optional<std::string>{"D-001"},
       "seasonal",
       "decor",
       "wreath and pine cone ornaments",
   };
-  Item item = state::insert_item(conn, in);
+  state::Item item = state::insert_item(conn, in);
   return item.id;
 }
 
