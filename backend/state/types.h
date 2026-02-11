@@ -4,6 +4,8 @@
 #include <optional>
 #include <string>
 
+namespace state {
+
 using Timestamp = std::chrono::sys_time<std::chrono::microseconds>;
 
 struct Item {
@@ -30,3 +32,9 @@ struct SearchHit {
   std::string sub_category;
   std::string contents;
 };
+
+struct UserAuthRecord {};
+struct CreateUserInput {};
+struct AuthSessionRecord {};
+struct CreateAuthSessionInput {};
+} // namespace state

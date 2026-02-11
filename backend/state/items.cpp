@@ -1,19 +1,20 @@
-#include "state.h"
 #include "errors.h"
+#include "state.h"
+#include "types.h"
 #include <chrono>
 #include <exception>
 #include <optional>
 #include <pqxx/pqxx>
 
-std::vector<SearchHit> state::search_items(pqxx::connection &conn,
-                                           const std::string &term,
-                                           std::size_t limit) {
-  std::vector<SearchHit> results;
+std::vector<state::SearchHit> state::search_items(pqxx::connection &conn,
+                                                  const std::string &term,
+                                                  std::size_t limit) {
+  std::vector<state::SearchHit> results;
 
   try {
     pqxx::read_transaction tx{conn};
 
-    std::string query = R"( 
+    std::string query = R"(
 select id, physical_label, category, sub_category, contents from stash
 where
   lower(
@@ -46,7 +47,7 @@ limit $2;
     tx.commit();
 
     for (const auto &row : r) {
-      results.push_back(SearchHit{
+      results.push_back(state::SearchHit{
           row["id"].as<long>(),
           row["physical_label"].is_null()
               ? std::nullopt
@@ -87,7 +88,7 @@ bool state::delete_item(pqxx::connection &conn, long itemID) {
   }
 }
 
-Item state::insert_item(pqxx::connection &conn, const InsertInput &in) {
+state::Item state::insert_item(pqxx::connection &conn, const InsertInput &in) {
   try {
     pqxx::work tx{conn};
 
@@ -106,17 +107,18 @@ Item state::insert_item(pqxx::connection &conn, const InsertInput &in) {
     auto created_us = row["created_at_us"].as<long long>();
     auto updated_us = row["updated_at_us"].as<long long>();
 
-    return Item{row["id"].as<long>(),
-                row["physical_label"].is_null()
-                    ? std::nullopt
-                    : std::optional<std::string>{row["physical_label"].c_str()},
-                row["category"].c_str(),
-                row["sub_category"].c_str(),
-                row["contents"].c_str(),
-                std::chrono::sys_time<std::chrono::microseconds>{
-                    std::chrono::microseconds{created_us}},
-                std::chrono::sys_time<std::chrono::microseconds>{
-                    std::chrono::microseconds{updated_us}}};
+    return state::Item{
+        row["id"].as<long>(),
+        row["physical_label"].is_null()
+            ? std::nullopt
+            : std::optional<std::string>{row["physical_label"].c_str()},
+        row["category"].c_str(),
+        row["sub_category"].c_str(),
+        row["contents"].c_str(),
+        std::chrono::sys_time<std::chrono::microseconds>{
+            std::chrono::microseconds{created_us}},
+        std::chrono::sys_time<std::chrono::microseconds>{
+            std::chrono::microseconds{updated_us}}};
   } catch (const pqxx::sql_error &e) {
     if (e.sqlstate() == "23505") {
       throw DuplicatePhysicalLabel(in.physical_label.value_or("<null>"));

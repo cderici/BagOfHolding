@@ -4,6 +4,8 @@
 #include <stdexcept>
 #include <string>
 
+namespace state {
+
 class DuplicatePhysicalLabel : public std::runtime_error {
 public:
   explicit DuplicatePhysicalLabel(const std::string &label)
@@ -15,3 +17,5 @@ public:
   explicit DBException(const std::string msg)
       : std::runtime_error(std::move(msg)) {}
 };
+
+} // namespace state
