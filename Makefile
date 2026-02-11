@@ -6,7 +6,8 @@ LDLIBS   := -lpqxx -lpq
 BUILDDIR := build
 
 BACKEND_NAME := backend
-BACKEND_SRC  := backend/main.cpp backend/state.cpp
+STATE_SRC    := $(wildcard backend/state/*.cpp)
+BACKEND_SRC  := backend/main.cpp $(STATE_SRC)
 BACKEND_BIN  := $(BUILDDIR)/$(BACKEND_NAME)
 
 STATE_TEST_SOURCES := $(wildcard tests/backend/state/*_test.cpp)
@@ -26,8 +27,8 @@ $(BACKEND_BIN): $(BACKEND_SRC) | $(BUILDDIR)
 
 test-bin: $(STATE_TEST_BINS)
 
-$(BUILDDIR)/%_test: tests/backend/state/%_test.cpp backend/state.cpp | $(BUILDDIR)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $< backend/state.cpp $(LDLIBS) -o $@
+$(BUILDDIR)/%_test: tests/backend/state/%_test.cpp $(STATE_SRC) | $(BUILDDIR)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $< $(STATE_SRC) $(LDLIBS) -o $@
 
 test: test-bin
 	@state_status=0; for test_bin in $(STATE_TEST_BINS); do ./$$test_bin || state_status=1; done; if [ $$state_status -eq 0 ]; then printf "\nState Layer Tests : PASS\n\n"; else printf "\nState Layer Tests : FAIL\n\n"; fi; backend_status=$$state_status; if [ $$backend_status -eq 0 ]; then printf -- "-- BACKEND TESTS : PASS\n\n"; else printf -- "-- BACKEND TESTS : FAIL\n\n"; fi; exit $$backend_status
